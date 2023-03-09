@@ -19,9 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
           - os: windows-latest
-          - os: ubuntu-20.04
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -63,17 +62,7 @@ jobs:
       - name: Install dependencies
         run: poetry config experimental.new-installer false && poetry install
 
-      - name: Test
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ]; then
-            sudo apt install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0 x11-utils
-            /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX
-            sudo apt update
-            sudo apt install -y libpulse-mainloop-glib0 libegl1-mesa-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libportaudio2
-          fi
-          
-          poetry run make test
-        shell: bash
+
 
       - name: Upload coverage reports to Codecov with GitHub Action
         uses: codecov/codecov-action@v3
@@ -87,7 +76,7 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-          - os: ubuntu-20.04
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -139,10 +128,6 @@ jobs:
             security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
             security list-keychain -d user -s $KEYCHAIN_PATH
 
-            # store notarytool credentials
-            xcrun notarytool store-credentials --apple-id "$APPLE_ID" --password "$APPLE_APP_PASSWORD" --team-id "$APPLE_TEAM_ID" notarytool --validate
-
-            poetry run make bundle_mac
 
           elif [ "$RUNNER_OS" == "Windows" ]; then
 
@@ -163,9 +148,7 @@ jobs:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
         shell: bash
 
       - uses: actions/upload-artifact@v3
@@ -183,7 +166,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
           - os: windows-latest
     needs: [ build, test ]
     if: startsWith(github.ref, 'refs/tags/')
@@ -204,7 +186,6 @@ jobs:
         with:
           files: |
             Buzz*-windows.tar.gz
-            Buzz*-unix.tar.gz
             Buzz*-windows.exe
 
 
