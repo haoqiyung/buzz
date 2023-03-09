@@ -159,6 +159,14 @@ jobs:
             dist/Buzz*-windows.exe
 
 
-
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          files: |
+            Buzz*-windows.tar.gz
+            Buzz*-windows.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GT_Token }}
 
 
