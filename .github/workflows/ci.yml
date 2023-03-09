@@ -164,7 +164,7 @@ jobs:
         with:
           draft: false
           files: |
-            dist/*
+            dist/Buzz*-windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GT_Token }}
 
